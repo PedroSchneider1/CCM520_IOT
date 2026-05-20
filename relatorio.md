@@ -126,7 +126,7 @@ O uso de `volatile` na declaração da flag garante que o compilador não otimiz
 ---
 
 ## 6. Fluxo do Software
-
+```
 [INÍCIO]
     │
     ▼
@@ -149,7 +149,7 @@ O uso de `volatile` na declaração da flag garante que o compilador não otimiz
          └── Não → [tentativas < 3?]
                         ├── Sim → [Senha Errada] → volta ao início
                         └── Não → [SISTEMA BLOQUEADO]
-
+```
 ### Controle de Fluxo Crítico
 
 A flag `volatile bool resetar` e a função `verifica_luz()` são os dois mecanismos de interrupção do fluxo normal. Ambos têm prioridade sobre a lógica de entrada de senha, garantindo resposta rápida a eventos de segurança.
