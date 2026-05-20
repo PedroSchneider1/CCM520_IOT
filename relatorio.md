@@ -1,6 +1,6 @@
 # Relatório Técnico — Sistema de Controle de Acesso para Cofre Inteligente
 
-**Disciplina:** CCM520  
+**Disciplina:** CCM4.0  
 **Projeto:** Controle de Acesso com Arduino  
 
 ---
@@ -23,27 +23,7 @@ O sistema foi desenvolvido em linguagem C para Arduino e integra os seguintes su
 
 ---
 
-## 3. Recursos de Hardware
-
-### 3.1 Microcontrolador
-
-Utilizado o **Arduino Uno**.
-
-### 3.2 Periféricos e Justificativas
-
-| Periférico    | Pino(s)               | Justificativa                                  |
-|---------------|-----------------------|------------------------------------------------|
-| LCD 16x2      | 4, 5, 6, 7, 11, 12    | Modo 4 bits, não precisa de pinos digitais     |
-| Potenciômetro | A0                    | Leitura analógica contínua, mapeada para 0–9   |
-| Botão Enviar  | D8                    | Botão como input                               |
-| Botão Reset   | D2                    | Pino com interrupção externa (INT0)            |
-| Servo Motor   | D3 (PWM)              | Controle de posição angular via PWM            |
-| Buzzer        | D9                    | Geração de tom via função `tone()`             |
-| LDR           | A1                    | Leitura analógica de ambiente                  |
-
----
-
-## 4. Recursos de Software e Bibliotecas
+## 3. Recursos de Software e Bibliotecas
 
 - **LiquidCrystal.h** (nativa Arduino): controle do display LCD em modo 4 bits.
 - **Servo.h** (nativa Arduino): abstração do controle PWM do servo motor.
@@ -52,9 +32,9 @@ Utilizado o **Arduino Uno**.
 
 ---
 
-## 5. Funcionalidades Implementadas
+## 4. Funcionalidades Implementadas
 
-### 5.1 Interface Visual (LCD)
+### 4.1 Interface Visual (LCD)
 
 O display LCD guia o usuário em todas as etapas do sistema. Foram implementadas as seguintes telas:
 
@@ -65,19 +45,19 @@ O display LCD guia o usuário em todas as etapas do sistema. Foram implementadas
 - **Tela de bloqueio:** exibe "INVASOR DETECTADO!" durante o estado de alarme.
 - **Tela de reset:** confirma a reinicialização do sistema.
 
-### 5.2 Entrada de Dados via Potenciômetro
+### 4.2 Entrada de Dados via Potenciômetro
 
 A seleção de cada dígito da senha é realizada pelo potenciômetro conectado à entrada analógica A0. O valor bruto (0–1023) é mapeado para o intervalo inteiro 0–9 pela função `map()`. A confirmação de cada dígito é feita pelo botão de envio (pino D8).
 
 A detecção do pressionamento do botão utiliza detecção de **borda de subida por software** (transição `LOW → HIGH`), comparando o estado atual com o estado anterior armazenado na variável `botao_anterior`. Esta abordagem elimina registros duplicados sem uso de outros temporizadores.
 
-### 5.3 Validação de Senha
+### 4.3 Validação de Senha
 
 A senha é composta por 4 dígitos inteiros armazenados no array `senha_cofre[]`. A validação compara elemento a elemento o array `senha_digitada[]` com `senha_cofre[]` na função `valida_senha()`, retornando `true` somente se todos os 4 dígitos coincidirem.
 
 A senha padrão definida é `{6, 9, 6, 9}` e pode ser modificada diretamente no código-fonte.
 
-### 5.4 Atuação sobre a Trava (Servo Motor)
+### 4.4 Atuação sobre a Trava (Servo Motor)
 
 O servo motor representa a trava física do cofre. A função `status_trava(bool aberto)` centraliza o controle:
 
@@ -86,15 +66,15 @@ O servo motor representa a trava física do cofre. A função `status_trava(bool
 
 O servo é inicializado na posição fechada no `setup()` e retorna ao estado fechado em qualquer situação de erro ou bloqueio.
 
-### 5.5 Feedback Sonoro (Buzzer)
+### 4.4.Feedback Sonoro (Buzzer)
 
 Foram implementadas duas funções de feedback sonoro:
 
-- **`buzzer_sucesso()`:** toca uma sequência de 4 notas ascendentes (Dó, Mi, Sol, Dó5) simulando um jingle de desbloqueio.
+- **`buzzer_sucesso()`:** toca uma sequência de 4 notas ascendentes (Dó, Mi, Sol, Dó4. simulando um jingle de desbloqueio.
 - **`buzzer_erro()`:** emite dois bipes graves e descendentes, sinalizando falha.
-- **Alarme de invasão:** em `sistema_bloqueado()`, o buzzer toca 3 pulsos de 150 Hz durante 300 ms cada, simulando um alarme de segurança.
+- **Alarme de invasão:** em `sistema_bloqueado()`, o buzzer toca 3 pulsos de 14. Hz durante 300 ms cada, simulando um alarme de segurança.
 
-### 5.6 Sistema de Bloqueio por Tentativas
+### 4.6 Sistema de Bloqueio por Tentativas
 
 O contador `tentativas` é incrementado a cada senha incorreta. Ao atingir **3 tentativas**, a função `sistema_bloqueado()` é chamada, que:
 
@@ -105,13 +85,13 @@ O contador `tentativas` é incrementado a cada senha incorreta. Ao atingir **3 t
 
 A saída desse estado só é possível via botão de reset (interrupção).
 
-### 5.7 Monitoramento de Segurança por LDR
+### 4.7 Monitoramento de Segurança por LDR
 
 A função `verifica_luz()` é chamada a cada iteração do `loop()`. Ela realiza a leitura analógica do LDR no pino A1 e compara com o limiar `CONST_LUZ` (110). Se o valor lido for inferior ao limiar — indicando alta luminosidade, como quando alguém tenta abrir o cofre à força — e a senha correta não foi inserida, o sistema aciona `sistema_bloqueado()` imediatamente.
 
 Este mecanismo simula o arrombamento ou abertura forçada do cofre.
 
-### 5.8 Interrupção de Hardware para Reset
+### 4.8 Interrupção de Hardware para Reset
 
 O botão de reset está conectado ao pino D2, que suporta a interrupção externa INT0 do ATmega328P. A interrupção é configurada para a **borda de subida** (`RISING`):
 
@@ -125,7 +105,7 @@ O uso de `volatile` na declaração da flag garante que o compilador não otimiz
 
 ---
 
-## 6. Fluxo do Software
+## 5. Fluxo do Software
 ```
 [INÍCIO]
     │
@@ -150,13 +130,13 @@ O uso de `volatile` na declaração da flag garante que o compilador não otimiz
                         ├── Sim → [Senha Errada] → volta ao início
                         └── Não → [SISTEMA BLOQUEADO]
 ```
-### Controle de Fluxo Crítico
+### 5.1 Controle de Fluxo Crítico
 
 A flag `volatile bool resetar` e a função `verifica_luz()` são os dois mecanismos de interrupção do fluxo normal. Ambos têm prioridade sobre a lógica de entrada de senha, garantindo resposta rápida a eventos de segurança.
 
 ---
 
-## 7. Estrutura do Código
+## 6. Estrutura do Código
 
 ```
 projeto.c
@@ -183,7 +163,7 @@ projeto.c
 └── reset_sistema_ISR()   → executa o reset completo do sistema
 ```
 
-### Snippets Relevantes
+### 6.1 Snippets Relevantes
 
 **Mapeamento do potenciômetro para dígito:**
 ```c
