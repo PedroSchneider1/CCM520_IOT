@@ -123,3 +123,7 @@ O reset:
 6. (Opcional) Use o **Monitor Serial** para acompanhar os logs de debug.
 
 ---
+
+# Foto do circuito
+
+![Circuito feito em aula e apresentado ao prof. Jonathan](circuito_feito.jpeg)
